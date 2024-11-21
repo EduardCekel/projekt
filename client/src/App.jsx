@@ -1,72 +1,38 @@
-import React, { useState, useEffect } from "react";
-import EventCalendar from "./Calendar/Calendar";
-import Home from "./Home/Home";
-import { Button } from "primereact/button";
-import { Routes, Route } from "react-router-dom";
-import TabPatients from "./Views/Tables/TabPatients";
-import Patient from "./Views/Patient";
-import { Register } from "./Auth/Register";
-import { Login } from "./Auth/Login";
-import Statistics from "./Statistics/Statistics";
-import Add from "./Views/Add";
-import SidebarButton from "./Sidebar/SidebarButton";
-import "./App.css";
-import "./styles/sidebar.css";
-import "../node_modules/primeflex/primeflex.css";
-import TabExaminations from "./Views/Tables/TabExaminations";
-import TabHospitalizations from "./Views/Tables/TabHospitalizations";
-import TabOperations from "./Views/Tables/TabOperations";
+import React, { useState, useEffect } from 'react';
+import EventCalendar from './Calendar/Calendar';
+import Home from './Home/Home';
+import { Button } from 'primereact/button';
+import { Routes, Route } from 'react-router-dom';
+import TabPatients from './Views/Tables/TabPatients';
+import Patient from './Views/Patient';
+import { Register } from './Auth/Register';
+import { Login } from './Auth/Login';
+import Statistics from './Views/Statistics';
+import Add from './Views/Add';
+import SidebarButton from './Sidebar/SidebarButton';
+import './App.css';
+import './styles/sidebar.css';
+import '../node_modules/primeflex/primeflex.css';
+import TabExaminations from './Views/Tables/TabExaminations';
+import TabHospitalizations from './Views/Tables/TabHospitalizations';
+import TabOperations from './Views/Tables/TabOperations';
 
-import Storage from "./Views/Storage";
-import Orders from "./Views/Orders";
-import WarehouseTransfers from "./Views/WarehouseTransfers";
+import Storage from './Views/Storage';
+import Orders from './Views/Orders';
+import WarehouseTransfers from './Views/WarehouseTransfers';
 
-import PharmacyStorage from "./Views/PharmacyStorage";
-import PharmacyStorageMedicaments from "./Views/PharmacyStorageMedicaments";
-import PharmacySearchMedicaments from "./Views/PharmacySearchMedicaments";
-import PharmacyStorageMedicalAids from "./Views/PharmacyStorageMedicalAids";
-import PharmacSearchMedicalAids from "./Views/PharmacSearchMedicalAids";
-import TabMedicaments from "./Views/Tables/TabMedicaments";
-import MedicamentCard from "./Details/MedicamentCard";
-import TabActiveSubstances from "./Views/Tables/TabActiveSubstances";
-import TabMedicalAids from "./Views/Tables/TabMedicalAids";
-import MedicalAidCard from "./Details/MedicalAidCard";
-import TabPharmacyManagers from "./Views/Tables/TabPharmacyManagers";
-import TabPharmacists from "./Views/Tables/TabPharmacists";
-import TabLaborants from "./Views/Tables/TabLaborants";
-import PharmacyManagerCard from "./Profile/PharmacyManagerCard";
-import PharmacistCard from "./Profile/PharmacistCard";
-import LaborantCard from "./Profile/LaborantCard";
-import PharmacyManagersDashboard from "./Views/PharmacyManagersDashboard";
-import TabPrescriptions from "./Views/Tables/TabPrescriptions";
-import PrecsriptionCard from "./Details/PrescriptionCard";
-import PharmacyReservations from "./Views/PharmacyReservations";
-import TabMedicamentsResevations from "./Views/Tables/TabMedicamentsResevations";
-import TabMedicalAidsReservations from "./Views/Tables/TabMedicalAidsReservations";
-import PharmacyEmployees from "./Views/PharmacyEmployees";
-import PharmacyDispensing from "./Views/PharmacyDispensing";
-import TabFreeSaleMedicaments from "./Views/Tables/TabFreeSaleMedicaments";
-import TabFreeSaleMedicalAids from "./Views/Tables/TabFreeSaleMedicalAids";
-import NotFoundPage404 from "./Views/NotFound404Page";
-
-import TabDoctorsOfHospital from "./Views/Tables/TabDoctorsOfHospital";
-import GetUserData from "./Auth/GetUserData";
-import Logout from "./Auth/Logout";
-import { useNavigate, useLocation } from "react-router-dom";
-import AdminPanel from "./Views/AdminPanel";
-import DoctorCard from "./Profile/DoctorCard";
-import Equipment from "./Views/Equipment";
-import HospitalRoom from "./HospitalRoom/HospitalRoom";
-import TabMeetings from "./Views/Tables/TabMeetings";
-import socketService from "./service/socketService";
-
-import WarehouseStatistics from "./Views/WarehouseStatistics";
-import Chat from "./Chat/Chat";
-import TabRooms from "./Views/Tables/TabRooms";
-import { PdfBasic } from "./Forms/Request/PdfBasic";
-import { PdfMandate } from "./Forms/Request/PdfMandate";
-import { PdfResults } from "./Forms/Request/PdfResults";
-import { LeavePdf } from "./Forms/LeavePdf";
+import TabDoctorsOfHospital from './Views/Tables/TabDoctorsOfHospital';
+import GetUserData from './Auth/GetUserData';
+import Logout from './Auth/Logout';
+import { useNavigate, useLocation } from 'react-router-dom';
+import AdminPanel from './Views/AdminPanel';
+import DoctorCard from './Profile/DoctorCard';
+import Equipment from './Views/Equipment';
+import InteractiveMap from './Views/InteractiveMap/InteractiveMap';
+import User from './Views/User';
+import HospitalRoom from './HospitalRoom/HospitalRoom';
+import TabMeetings from './Views/Tables/TabMeetings';
+import socketService from './service/socketService';
 function App() {
   const [visibleLeft, setVisibleLeft] = useState(false);
   const [patientId, setPatientId] = useState(null);
@@ -79,483 +45,247 @@ function App() {
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("hospit-user");
+    const token = localStorage.getItem('hospit-user');
     const userDataHelper = GetUserData(token);
 
     setUserData(userDataHelper);
-    if (typeof userDataHelper !== "undefined" && userDataHelper !== null) {
-      const headers = { authorization: "Bearer " + token };
+    if (typeof userDataHelper !== 'undefined' && userDataHelper !== null) {
+      const headers = { authorization: 'Bearer ' + token };
       if (userDataHelper.UserInfo.role === 9999) {
-        fetch(
-          `/patient/pacientId/${userDataHelper.UserInfo.userid.replace(
-            "/",
-            "$"
-          )}`,
-          {
-            headers,
-          }
-        )
+        fetch(`/api/patient/pacientId/${userDataHelper.UserInfo.userid}`, {
+          headers,
+        })
           .then((response) => response.json())
           .then((data) => {
             setPatientId(data[0].ID_PACIENTA);
           });
       } else {
-        fetch(`/chat/unread/${userDataHelper.UserInfo.userid}`, {
+        fetch(`/api/chat/unread/${userDataHelper.UserInfo.userid}`, {
           headers,
         })
           .then((res) => res.json())
           .then((data) => setNotifications(data.POCET));
       }
-    } else if (location.pathname !== "/register") {
-      navigate("/login");
+    } else if (location.pathname !== '/register') {
+      navigate('/login');
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    const token = localStorage.getItem("hospit-user");
+    const token = localStorage.getItem('hospit-user');
     const userDataHelper = GetUserData(token);
-    if (userDataHelper?.UserInfo.role !== 9999) {
-      const headers = { authorization: "Bearer " + token };
-      socketService.connect();
-      socketService.on("newMessage", (message) => {
-        fetch(`/chat/unread/${userDataHelper.UserInfo.userid}`, {
-          headers,
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            setNotifications(data.POCET);
-          });
-      });
+    const headers = { authorization: 'Bearer ' + token };
+    socketService.connect();
+    socketService.on('newMessage', (message) => {
+      fetch(`/api/chat/unread/${userDataHelper.UserInfo.userid}`, {
+        headers,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setNotifications(data.POCET);
+        });
+    });
 
-      return () => {
-        socketService.disconnect();
-      };
-    }
+    return () => {
+      socketService.disconnect();
+    };
   }, [location.pathname]);
 
   const sidebarButtonsAdmin = [
     <SidebarButton
-      key="1"
+      key='1'
       visibleLeft={visibleLeft}
-      path="/"
-      label="Domov"
-      icon="home-icon"
+      path='/'
+      label='Domov'
+      icon='home-icon'
     />,
     <SidebarButton
-      key="3"
+      key='3'
       visibleLeft={visibleLeft}
-      path="/patients"
-      label="Pacienti"
-      icon="patient-icon"
+      path='/patients'
+      label='Pacienti'
+      icon='patient-icon'
     />,
     <SidebarButton
-      key="13"
+      key='8'
       visibleLeft={visibleLeft}
-      path="/adminPanel"
-      label="Admin Panel"
-      icon="database-icon"
+      path='/statistics'
+      label='Štatistiky'
+      icon='stat-icon'
     />,
     <SidebarButton
-      key="5"
+      key='10'
       visibleLeft={visibleLeft}
-      path="/examinations"
-      label="Vyšetrenia"
-      icon="examination-icon"
+      path='/sklad'
+      label='Sklad'
+      icon='storage-icon'
     />,
     <SidebarButton
-      key="6"
+      key='13'
       visibleLeft={visibleLeft}
-      path="/hospitalizations"
-      icon="hospit-icon"
-      label="Hospitalizácie"
+      path='/adminPanel'
+      label='Admin Panel'
+      icon='database-icon'
     />,
     <SidebarButton
-      key="7"
+      key='5'
       visibleLeft={visibleLeft}
-      path="/operations"
-      label="Operácie"
-      icon="operation-icon"
+      path='/examinations'
+      label='Vyšetrenia'
+      icon='examination-icon'
     />,
     <SidebarButton
-      key="8"
+      key='6'
       visibleLeft={visibleLeft}
-      path="/statistics"
-      label="Štatistiky"
-      icon="stat-icon"
-    />,
-
-    <SidebarButton
-      key="10"
-      visibleLeft={visibleLeft}
-      path="/sklad"
-      label="Sklad"
-      icon="storage-icon"
+      path='/hospitalizations'
+      icon='hospit-icon'
+      label='Hospitalizácie'
     />,
     <SidebarButton
-      key="11"
+      key='7'
       visibleLeft={visibleLeft}
-      path="/chat"
-      label="Správy"
-      icon="chat-icon"
-      notifications={notifications}
+      path='/operations'
+      label='Operácie'
+      icon='operation-icon'
     />,
   ];
 
   const sidebarButtonsDoctor = [
     <SidebarButton
-      key="1"
+      key='1'
       visibleLeft={visibleLeft}
-      path="/"
-      label="Domov"
-      icon="home-icon"
+      path='/'
+      label='Domov'
+      icon='home-icon'
     />,
     <SidebarButton
-      key="2"
+      key='2'
       visibleLeft={visibleLeft}
-      path="/calendar"
-      label="Kalendár"
-      icon="calendar-icon"
+      path='/calendar'
+      label='Kalendár'
+      icon='calendar-icon'
     />,
     <SidebarButton
-      key="3"
+      key='3'
       visibleLeft={visibleLeft}
-      path="/patients"
-      label="Pacienti"
-      icon="patient-icon"
+      path='/patients'
+      label='Pacienti'
+      icon='patient-icon'
+    />,
+
+    <SidebarButton
+      key='5'
+      visibleLeft={visibleLeft}
+      path='/examinations'
+      label='Vyšetrenia'
+      icon='examination-icon'
     />,
     <SidebarButton
-      key="5"
+      key='6'
       visibleLeft={visibleLeft}
-      path="/examinations"
-      label="Vyšetrenia"
-      icon="examination-icon"
+      path='/hospitalizations'
+      icon='hospit-icon'
+      label='Hospitalizácie'
     />,
     <SidebarButton
-      key="6"
+      key='7'
       visibleLeft={visibleLeft}
-      path="/hospitalizations"
-      icon="hospit-icon"
-      label="Hospitalizácie"
+      path='/operations'
+      label='Operácie'
+      icon='operation-icon'
     />,
     <SidebarButton
-      key="7"
+      key='9'
       visibleLeft={visibleLeft}
-      path="/operations"
-      label="Operácie"
-      icon="operation-icon"
+      path='/add'
+      label='Pridať udalosť'
+      icon='plus-icon'
     />,
     <SidebarButton
-      key="9"
+      key='10'
       visibleLeft={visibleLeft}
-      path="/add"
-      label="Pridať udalosť"
-      icon="plus-icon"
+      path='/sklad'
+      label='Sklad'
+      icon='storage-icon'
     />,
     <SidebarButton
-      key="10"
+      key='13'
       visibleLeft={visibleLeft}
-      path="/sklad"
-      label="Sklad"
-      icon="storage-icon"
+      path='/statistics'
+      label='Štatistiky'
+      icon='stat-icon'
     />,
     <SidebarButton
-      key="12"
+      key='12'
       visibleLeft={visibleLeft}
-      path="/meetings"
-      label="Konzíliá"
-      icon="meeting-icon"
-    />,
-    <SidebarButton
-      key="11"
-      visibleLeft={visibleLeft}
-      path="/chat"
-      label="Správy"
-      icon="chat-icon"
-      notifications={notifications}
+      path='/meetings'
+      label='Konzíliá'
+      icon='meeting-icon'
     />,
   ];
 
   const sidebarButtonsChief = [
     <SidebarButton
-      key="beds"
+      key='4'
       visibleLeft={visibleLeft}
-      path="/rooms"
-      label="Lôžka"
-      icon="bed-icon"
-    />,
-    <SidebarButton
-      key="4"
-      visibleLeft={visibleLeft}
-      path="/doctors"
-      label="Lekári"
-      icon="doctor-icon"
-    />,
-    <SidebarButton
-      key="stats"
-      visibleLeft={visibleLeft}
-      path="/statistics"
-      label="Štatistiky"
-      icon="stat-icon"
+      path='/doctors'
+      label='Lekári'
+      icon='doctor-icon'
     />,
   ];
 
   const sidebarButtonsPatient = [
     <SidebarButton
-      key="1"
+      key='1'
       visibleLeft={visibleLeft}
-      path="/"
-      label="Domov"
-      icon="home-icon"
+      path='/'
+      label='Domov'
+      icon='home-icon'
     />,
     <SidebarButton
-      key="2"
+      key='2'
       visibleLeft={visibleLeft}
-      path="/calendar"
-      label="Kalendár"
-      icon="calendar-icon"
+      path='/calendar'
+      label='Kalendár'
+      icon='calendar-icon'
     />,
     <SidebarButton
-      key="3"
+      key='3'
       visibleLeft={visibleLeft}
-      path="/patient"
-      label="Pacient"
-      icon="patient-icon"
+      path='/patient'
+      label='Pacient'
+      icon='patient-icon'
     />,
   ];
 
   const sidebarWarehouseManager = [
     <SidebarButton
-      key="1"
+      key='1'
       visibleLeft={visibleLeft}
-      path="/"
-      label="Domov"
-      icon="home-icon"
+      path='/'
+      label='Domov'
+      icon='home-icon'
     />,
     <SidebarButton
-      key="10"
+      key='10'
       visibleLeft={visibleLeft}
-      path="/sklad"
-      label="Sklad"
-      icon="storage-icon"
+      path='/sklad'
+      label='Sklad'
+      icon='storage-icon'
     />,
     <SidebarButton
-      key="14"
+      key='14'
       visibleLeft={visibleLeft}
-      path="/objednavky"
-      label="Objednavky"
-      icon="order-icon"
+      path='/objednavky'
+      label='Objednavky'
+      icon='order-icon'
     />,
     <SidebarButton
-      key="15"
+      key='15'
       visibleLeft={visibleLeft}
-      path="/presuny"
-      label="Presuny"
-      icon="warehouse-move-icon"
-    />,
-    <SidebarButton
-      key="16"
-      visibleLeft={visibleLeft}
-      path="/skladStatistiky"
-      label="Štatistiky skladu"
-      icon="stat-icon"
-    />,
-  ];
-
-  const sidebarButtonsPharmacyManager = [
-    <SidebarButton
-      key="1"
-      visibleLeft={visibleLeft}
-      path="/"
-      label="Domov"
-      icon="home-icon"
-    />,
-    <SidebarButton
-      key="20"
-      visibleLeft={visibleLeft}
-      path="/about_me"
-      label="Informácie o mne"
-      icon="aboutMe-icon"
-    />,
-    <SidebarButton
-      key="18"
-      visibleLeft={visibleLeft}
-      path="/medicaments"
-      label="Číselník liekov"
-      icon="medicaments-icon"
-    />,
-    <SidebarButton
-      key="25"
-      visibleLeft={visibleLeft}
-      path="/active_substances"
-      label="Zoznam účinných látok"
-      icon="active-substance-icon"
-    />,
-    <SidebarButton
-      key="19"
-      visibleLeft={visibleLeft}
-      path="/medical_aids"
-      label="Číselník zdravotníckych pomôcok"
-      icon="medical-aids-icon"
-    />,
-    <SidebarButton
-      key="15"
-      visibleLeft={visibleLeft}
-      path="/pharmacy_managers"
-      label="Manažéri lekární na Slovensku"
-      icon="pharmacy-manager-icon"
-    />,
-    <SidebarButton
-      key="15"
-      visibleLeft={visibleLeft}
-      path="/pharmacy_employees"
-      label="Zamestnanci lekárne"
-      icon="pharmacy-employee-icon"
-    />,
-    // <SidebarButton
-    //   key="10"
-    //   visibleLeft={visibleLeft}
-    //   path="/sklad"
-    //   label="Sklad"
-    //   icon="storage-icon"
-    // />,
-    <SidebarButton
-      key="14"
-      visibleLeft={visibleLeft}
-      path="/objednavky"
-      label="Objednavky"
-      icon="order-icon"
-    />,
-    <SidebarButton
-      key="15"
-      visibleLeft={visibleLeft}
-      path="/presuny"
-      label="Presuny"
-      icon="warehouse-move-icon"
-    />,
-    <SidebarButton
-      key="14"
-      visibleLeft={visibleLeft}
-      path="/lekarensky_sklad"
-      label="Lekárenský sklad"
-      icon="pharmacy-storage-icon"
-    />,
-    <SidebarButton
-      key="23"
-      visibleLeft={visibleLeft}
-      path="/dispensing_medicines"
-      label="Výdaj"
-      icon="dispensing-medicines-icon"
-    />,
-    <SidebarButton
-      key="21"
-      visibleLeft={visibleLeft}
-      path="/reservations"
-      label="Rezervácie"
-      icon="reservations-icon"
-    />,
-  ];
-
-  const sidebarButtonsPharmacist = [
-    <SidebarButton
-      key="1"
-      visibleLeft={visibleLeft}
-      path="/"
-      label="Domov"
-      icon="home-icon"
-    />,
-    <SidebarButton
-      key="20"
-      visibleLeft={visibleLeft}
-      path="/about_me"
-      label="Informácie o mne"
-      icon="aboutMe-icon"
-    />,
-    <SidebarButton
-      key="18"
-      visibleLeft={visibleLeft}
-      path="/medicaments"
-      label="Číselník liekov"
-      icon="medicaments-icon"
-    />,
-    <SidebarButton
-      key="25"
-      visibleLeft={visibleLeft}
-      path="/active_substances"
-      label="Zoznam účinných látok"
-      icon="active-substance-icon"
-    />,
-    <SidebarButton
-      key="19"
-      visibleLeft={visibleLeft}
-      path="/medical_aids"
-      label="Číselník zdravotníckych pomôcok"
-      icon="medical-aids-icon"
-    />,
-    <SidebarButton
-      key="14"
-      visibleLeft={visibleLeft}
-      path="/lekarensky_sklad"
-      label="Lekárenský sklad"
-      icon="pharmacy-storage-icon"
-    />,
-    <SidebarButton
-      key="23"
-      visibleLeft={visibleLeft}
-      path="/dispensing_medicines"
-      label="Výdaj"
-      icon="dispensing-medicines-icon"
-    />,
-    <SidebarButton
-      key="21"
-      visibleLeft={visibleLeft}
-      path="/reservations"
-      label="Rezervácie"
-      icon="reservations-icon"
-    />,
-  ];
-
-  const sidebarButtonsLaborant = [
-    <SidebarButton
-      key="1"
-      visibleLeft={visibleLeft}
-      path="/"
-      label="Domov"
-      icon="home-icon"
-    />,
-    <SidebarButton
-      key="20"
-      visibleLeft={visibleLeft}
-      path="/about_me"
-      label="Informácie o mne"
-      icon="aboutMe-icon"
-    />,
-    <SidebarButton
-      key="18"
-      visibleLeft={visibleLeft}
-      path="/medicaments"
-      label="Číselník liekov"
-      icon="medicaments-icon"
-    />,
-    <SidebarButton
-      key="25"
-      visibleLeft={visibleLeft}
-      path="/active_substances"
-      label="Zoznam účinných látok"
-      icon="active-substance-icon"
-    />,
-    <SidebarButton
-      key="19"
-      visibleLeft={visibleLeft}
-      path="/medical_aids"
-      label="Číselník zdravotníckych pomôcok"
-      icon="medical-aids-icon"
-    />,
-    <SidebarButton
-      key="14"
-      visibleLeft={visibleLeft}
-      path="/lekarensky_sklad"
-      label="Lekárenský sklad"
-      icon="pharmacy-storage-icon"
+      path='/presuny'
+      label='Presuny'
+      icon='warehouse-move-icon'
     />,
   ];
 
@@ -563,38 +293,32 @@ function App() {
     return (
       <>
         <Route
-          path="/calendar"
+          path='/calendar'
           element={<EventCalendar userData={userData}></EventCalendar>}
         ></Route>
-        <Route path="/patients" element={<TabPatients></TabPatients>}></Route>
+        <Route path='/patients' element={<TabPatients></TabPatients>}></Route>
         <Route
-          path="/patient"
+          path='/patient'
           element={
             <Patient patientId={patientId} userData={userData}></Patient>
           }
         ></Route>
         <Route
-          path="/examinations"
+          path='/examinations'
           element={<TabExaminations></TabExaminations>}
         ></Route>
         <Route
-          path="/hospitalizations"
+          path='/hospitalizations'
           element={<TabHospitalizations></TabHospitalizations>}
         ></Route>
         <Route
-          path="/operations"
+          path='/operations'
           element={<TabOperations></TabOperations>}
         ></Route>
-        <Route path="/statistics" element={<Statistics></Statistics>}></Route>
-        <Route path="/add" element={<Add></Add>}></Route>
-        <Route path="/sklad" element={<Storage />}></Route>
-        <Route path="/meetings" element={<TabMeetings />}></Route>
-        <Route path="/room" element={<HospitalRoom />}></Route>
-        <Route path="/rooms" element={<TabRooms />}></Route>
-        <Route path="/add/basicPdf" element={<PdfBasic />}></Route>
-        <Route path="/add/mandatePdf" element={<PdfMandate />}></Route>
-        <Route path="/add/resultsPdf" element={<PdfResults />}></Route>
-        <Route path="/add/leavePdf" element={<LeavePdf />}></Route>
+        <Route path='/statistics' element={<Statistics></Statistics>}></Route>
+        <Route path='/add' element={<Add></Add>}></Route>
+        <Route path='/sklad' element={<Storage />}></Route>
+        <Route path='/meetings' element={<TabMeetings />}></Route>
       </>
     );
   };
@@ -603,19 +327,21 @@ function App() {
     return (
       <>
         <Route
-          path="/doctors"
+          path='/doctors'
           element={<TabDoctorsOfHospital></TabDoctorsOfHospital>}
         ></Route>
-        <Route path="/doctor" element={<DoctorCard></DoctorCard>}></Route>
-        <Route path="/equipment" element={<Equipment></Equipment>}></Route>
+        <Route path='/doctor' element={<DoctorCard></DoctorCard>}></Route>
+        <Route path='/equipment' element={<Equipment></Equipment>}></Route>
       </>
     );
   };
   const renderAdminRoutes = () => {
     return (
       <>
-        <Route path="/patients" element={<TabPatients></TabPatients>}></Route>
-        <Route path="/adminPanel" element={<AdminPanel />}></Route>
+        <Route path='/statistics' element={<Statistics></Statistics>}></Route>
+        <Route path='/patients' element={<TabPatients></TabPatients>}></Route>
+        <Route path='/sklad' element={<Storage />}></Route>
+        <Route path='/adminPanel' element={<AdminPanel />}></Route>
       </>
     );
   };
@@ -624,11 +350,11 @@ function App() {
     return (
       <>
         <Route
-          path="/calendar"
+          path='/calendar'
           element={<EventCalendar userData={userData}></EventCalendar>}
         ></Route>
         <Route
-          path="/patient"
+          path='/patient'
           element={
             <Patient userData={userData} patientId={patientId}></Patient>
           }
@@ -640,203 +366,34 @@ function App() {
   const renderWarehouseManagerRoutes = () => {
     return (
       <>
-        <Route path="/sklad" element={<Storage />}></Route>
-        <Route path="/objednavky" element={<Orders />}></Route>
-        <Route path="/presuny" element={<WarehouseTransfers />}></Route>
-        <Route
-          path="/skladStatistiky"
-          element={<WarehouseStatistics />}
-        ></Route>
-      </>
-    );
-  };
-
-  const renderPharmacyManagerRoutes = () => {
-    return (
-      <>
-        <Route path="/about_me" element={<PharmacyManagersDashboard />}></Route>
-        <Route path="/medicaments" element={<TabMedicaments />}></Route>
-        <Route path="/medicament_detail" element={<MedicamentCard />}></Route>
-        <Route
-          path="/active_substances"
-          element={<TabActiveSubstances />}
-        ></Route>
-        <Route path="/medical_aids" element={<TabMedicalAids />}></Route>
-        <Route path="/medicalAid_detail" element={<MedicalAidCard />}></Route>
-        <Route path="/lekarensky_sklad" element={<PharmacyStorage />}></Route>
-        <Route
-          path="/lekarensky_sklad_lieky"
-          element={<PharmacyStorageMedicaments />}
-        ></Route>
-        <Route
-          path="/lekarensky_sklad_zdravotnickePomocky"
-          element={<PharmacyStorageMedicalAids />}
-        ></Route>
-        <Route
-          path="/lekarensky_sklad_vyhladavanieLiecivaPodlaLekarni"
-          element={<PharmacySearchMedicaments />}
-        ></Route>
-        <Route
-          path="/lekarensky_sklad_vyhladavanieZdrPomockyPodlaLekarni"
-          element={<PharmacSearchMedicalAids />}
-        ></Route>
-        <Route
-          path="/pharmacy_managers"
-          element={<TabPharmacyManagers />}
-        ></Route>
-        <Route
-          path="/pharmacy_manager"
-          element={<PharmacyManagerCard />}
-        ></Route>
-        <Route
-          path="/pharmacy_employees"
-          element={<PharmacyEmployees />}
-        ></Route>
-        <Route path="/pharmacists" element={<TabPharmacists />}></Route>
-        <Route path="/pharmacist" element={<PharmacistCard />}></Route>
-        <Route path="/laborants" element={<TabLaborants />}></Route>
-        <Route path="/laborant" element={<LaborantCard></LaborantCard>}></Route>
-        <Route
-          path="/dispensing_medicines"
-          element={<PharmacyDispensing />}
-        ></Route>
-        <Route path="/prescriptions" element={<TabPrescriptions />}></Route>
-        <Route
-          path="/prescription_detail"
-          element={<PrecsriptionCard />}
-        ></Route>
-        <Route
-          path="/free_sale_medicaments"
-          element={<TabFreeSaleMedicaments />}
-        ></Route>
-        <Route
-          path="/free_sale_med_aids"
-          element={<TabFreeSaleMedicalAids />}
-        ></Route>
-        <Route path="/reservations" element={<PharmacyReservations />}></Route>
-        <Route
-          path="/medicaments_reservations"
-          element={<TabMedicamentsResevations />}
-        ></Route>
-        <Route
-          path="/medical_aids_reservations"
-          element={<TabMedicalAidsReservations />}
-        ></Route>
-        <Route path="/sklad" element={<Storage />}></Route>
-        <Route path="/objednavky" element={<Orders />}></Route>
-        <Route path="/presuny" element={<WarehouseTransfers />}></Route>
-        <Route path="*" element={<NotFoundPage404 />}></Route>
-      </>
-    );
-  };
-
-  const renderPharmacistRoutes = () => {
-    return (
-      <>
-        <Route path="/about_me" element={<PharmacyManagersDashboard />}></Route>
-        <Route path="/medicaments" element={<TabMedicaments />}></Route>
-        <Route path="/medicament_detail" element={<MedicamentCard />}></Route>
-        <Route
-          path="/active_substances"
-          element={<TabActiveSubstances />}
-        ></Route>
-        <Route path="/medical_aids" element={<TabMedicalAids />}></Route>
-        <Route path="/medicalAid_detail" element={<MedicalAidCard />}></Route>
-        <Route path="/lekarensky_sklad" element={<PharmacyStorage />}></Route>
-        <Route
-          path="/lekarensky_sklad_lieky"
-          element={<PharmacyStorageMedicaments />}
-        ></Route>
-        <Route
-          path="/lekarensky_sklad_zdravotnickePomocky"
-          element={<PharmacyStorageMedicalAids />}
-        ></Route>
-        <Route
-          path="/lekarensky_sklad_vyhladavanieLiecivaPodlaLekarni"
-          element={<PharmacySearchMedicaments />}
-        ></Route>
-        <Route
-          path="/lekarensky_sklad_vyhladavanieZdrPomockyPodlaLekarni"
-          element={<PharmacSearchMedicalAids />}
-        ></Route>
-        <Route
-          path="/dispensing_medicines"
-          element={<PharmacyDispensing />}
-        ></Route>
-        <Route path="/prescriptions" element={<TabPrescriptions />}></Route>
-        <Route
-          path="/prescription_detail"
-          element={<PrecsriptionCard />}
-        ></Route>
-        <Route
-          path="/free_sale_medicaments"
-          element={<TabFreeSaleMedicaments />}
-        ></Route>
-        <Route
-          path="/free_sale_med_aids"
-          element={<TabFreeSaleMedicalAids />}
-        ></Route>
-        <Route path="/reservations" element={<PharmacyReservations />}></Route>
-        <Route
-          path="/medicaments_reservations"
-          element={<TabMedicamentsResevations />}
-        ></Route>
-        <Route
-          path="/medical_aids_reservations"
-          element={<TabMedicalAidsReservations />}
-        ></Route>
-        <Route path="*" element={<NotFoundPage404 />}></Route>
-      </>
-    );
-  };
-
-  const renderLaborantRoutes = () => {
-    return (
-      <>
-        <Route path="/about_me" element={<PharmacyManagersDashboard />}></Route>
-        <Route path="/medicaments" element={<TabMedicaments />}></Route>
-        <Route path="/medicament_detail" element={<MedicamentCard />}></Route>
-        <Route
-          path="/active_substances"
-          element={<TabActiveSubstances />}
-        ></Route>
-        <Route path="/medical_aids" element={<TabMedicalAids />}></Route>
-        <Route path="/medicalAid_detail" element={<MedicalAidCard />}></Route>
-        <Route path="/lekarensky_sklad" element={<PharmacyStorage />}></Route>
-        <Route
-          path="/lekarensky_sklad_lieky"
-          element={<PharmacyStorageMedicaments />}
-        ></Route>
-        <Route
-          path="/lekarensky_sklad_zdravotnickePomocky"
-          element={<PharmacyStorageMedicalAids />}
-        ></Route>
-        <Route path="*" element={<NotFoundPage404 />}></Route>
+        <Route path='/sklad' element={<Storage />}></Route>
+        <Route path='/objednavky' element={<Orders />}></Route>
+        <Route path='/presuny' element={<WarehouseTransfers />}></Route>
       </>
     );
   };
 
   return (
     <div>
-      <div className={`side-box ${visibleLeft ? "side-box-opened" : ""}`}>
+      <div className={`side-box ${visibleLeft ? 'side-box-opened' : ''}`}>
         <Button
-          icon={`${visibleLeft ? "pi pi-times" : "pi pi-bars"}`}
+          icon={`${visibleLeft ? 'pi pi-times' : 'pi pi-bars'}`}
           onClick={() => handleShowSidebar()}
-          iconPos="right"
+          iconPos='right'
           style={{
-            marginTop: "1rem",
-            marginRight: "8px",
-            marginLeft: "auto",
-            display: "flex",
-            background: "none",
-            border: "none",
+            marginTop: '1rem',
+            marginRight: '8px',
+            marginLeft: 'auto',
+            display: 'flex',
+            background: 'none',
+            border: 'none',
           }}
         />
-        {typeof userData !== "undefined" &&
+        {typeof userData !== 'undefined' &&
         userData !== null &&
         userData.UserInfo.role === 0 ? (
           sidebarButtonsAdmin
-        ) : userData !== null && userData.UserInfo.role === 1 ? (
+        ) : userData !== null && userData.UserInfo.role === 2 ? (
           sidebarButtonsDoctor
         ) : userData !== null && userData.UserInfo.role === 3 ? (
           <>
@@ -846,43 +403,55 @@ function App() {
           sidebarButtonsPatient
         ) : userData !== null && userData.UserInfo.role === 5 ? (
           sidebarWarehouseManager
-        ) : userData !== null && userData.UserInfo.role === 10 ? (
-          sidebarButtonsPharmacyManager
-        ) : userData !== null && userData.UserInfo.role === 9 ? (
-          sidebarButtonsPharmacist
-        ) : userData !== null && userData.UserInfo.role === 8 ? (
-          sidebarButtonsLaborant
         ) : (
-          ""
+          ''
         )}
-        {typeof userData !== "undefined" && userData !== null ? (
+        {typeof userData !== 'undefined' && userData !== null ? (
           <>
+            {' '}
             <SidebarButton
-              key="12"
+              key='11'
               visibleLeft={visibleLeft}
-              path="/logout"
-              label="Odhlásiť"
-              icon="logout-icon"
+              path='/user'
+              label='Správy'
+              icon='chat-icon'
+              notifications={notifications}
+            />{' '}
+            <SidebarButton
+              key='12'
+              visibleLeft={visibleLeft}
+              path='/logout'
+              label='Odhlas'
+              icon='logout-icon'
             />
           </>
         ) : (
-          ""
+          ''
         )}
       </div>
       <div
-        className={`page-content ${visibleLeft ? "page-content-opened" : ""}`}
+        className={`page-content ${visibleLeft ? 'page-content-opened' : ''}`}
       >
         <Routes>
-          <Route path="/" element={<Home userData={userData}></Home>}></Route>
-          <Route path="/register" element={<Register></Register>}></Route>
-          <Route path="/login" element={<Login></Login>}></Route>
-          <Route path="/logout" element={<Logout></Logout>}></Route>
-          <Route path="/chat" element={<Chat />}></Route>
-          {userData && userData.UserInfo.role === 0 ? (
+          <Route path='/' element={<Home userData={userData}></Home>}></Route>
+          <Route path='/register' element={<Register></Register>}></Route>
+          <Route path='/login' element={<Login></Login>}></Route>
+          <Route path='/logout' element={<Logout></Logout>}></Route>
+          <Route path='/user' element={<User></User>}></Route>
+          <Route path='/room' element={<HospitalRoom />}></Route>
+          <Route
+            path='/map'
+            element={<InteractiveMap></InteractiveMap>}
+          ></Route>
+          {typeof userData !== 'undefined' &&
+          userData !== null &&
+          userData.UserInfo.role === 0 ? (
             <>
-              {renderAdminRoutes()} {renderChiefRoutes()} {renderDoctorRoutes()}
+              {renderChiefRoutes()} {renderDoctorRoutes()} {renderAdminRoutes()}
             </>
-          ) : userData && userData.UserInfo.role === 1 ? (
+          ) : typeof userData !== 'undefined' &&
+            userData !== null &&
+            userData.UserInfo.role === 2 ? (
             renderDoctorRoutes()
           ) : userData && userData.UserInfo.role === 3 ? (
             <>
@@ -890,26 +459,14 @@ function App() {
             </>
           ) : userData && userData.UserInfo.role === 9999 ? (
             renderPatientRoutes()
-          ) : typeof userData !== "undefined" &&
+          ) : typeof userData !== 'undefined' &&
             userData !== null &&
             userData.UserInfo.role === 5 ? (
             <>
               {renderWarehouseManagerRoutes()} {renderChiefRoutes()}
             </>
-          ) : typeof userData !== "undefined" &&
-            userData !== null &&
-            userData.UserInfo.role === 10 ? (
-            <>{renderPharmacyManagerRoutes()}</>
-          ) : typeof userData !== "undefined" &&
-            userData !== null &&
-            userData.UserInfo.role === 9 ? (
-            <>{renderPharmacistRoutes()}</>
-          ) : typeof userData !== "undefined" &&
-            userData !== null &&
-            userData.UserInfo.role === 8 ? (
-            <>{renderLaborantRoutes()}</>
           ) : (
-            ""
+            ''
           )}
         </Routes>
       </div>

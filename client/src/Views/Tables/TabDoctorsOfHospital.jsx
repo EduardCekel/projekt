@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from "react";
-import TabDoctors from "./TabDoctors";
-import GetUserData from "../../Auth/GetUserData";
-import { useNavigate } from "react-router";
-import { Toast } from "primereact/toast";
+import React, { useState, useRef, useEffect } from 'react';
+import TabDoctors from './TabDoctors';
+import GetUserData from '../../Auth/GetUserData';
+import { useNavigate } from 'react-router';
+import { Toast } from 'primereact/toast';
 
 function TabDoctorsOfHospital() {
   const [lekari, setLekari] = useState(null);
@@ -10,10 +10,10 @@ function TabDoctorsOfHospital() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("hospit-user");
+    const token = localStorage.getItem('hospit-user');
     const userDataHelper = GetUserData(token);
-    const headers = { authorization: "Bearer " + token };
-    fetch(`/lekar/zamestnanci/${userDataHelper.UserInfo.userid}`, { headers })
+    const headers = { authorization: 'Bearer ' + token };
+    fetch(`/api/lekar/lekari/${userDataHelper.UserInfo.userid}`, { headers })
       .then((response) => {
         // Kontrola ci response je ok (status:200)
         if (response.ok) {
@@ -22,12 +22,12 @@ function TabDoctorsOfHospital() {
         } else if (response.status === 410) {
           // Token expiroval redirect na logout
           toast.current.show({
-            severity: "error",
-            summary: "Session timeout redirecting to login page",
+            severity: 'error',
+            summary: 'Session timeout redirecting to login page',
             life: 999999999,
           });
           setTimeout(() => {
-            navigate("/logout");
+            navigate('/logout');
           }, 3000);
         }
       })
@@ -38,7 +38,7 @@ function TabDoctorsOfHospital() {
 
   return (
     <div>
-      <Toast ref={toast} position="top-center" />
+      <Toast ref={toast} position='top-center' />
       {lekari}
     </div>
   );

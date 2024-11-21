@@ -1,4 +1,5 @@
 const database = require("../database/Database");
+const { autoCommit } = require("oracledb");
 async function insertPriloha(blob) {
   try {
     let conn = await database.getConnection();
@@ -11,7 +12,7 @@ async function insertPriloha(blob) {
 
     console.log("Rows inserted " + result.rowsAffected);
   } catch (err) {
-    throw new Error("Database error: " + err);
+    throw new Error('Database error: ' + err);
   }
 }
 

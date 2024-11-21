@@ -5,7 +5,7 @@ async function getLieky() {
   try {
     let conn = await database.getConnection();
     const result = await conn.execute(
-      `SELECT nazov, id_liek as "ID_LIEK" FROM liek order by nazov`
+      `SELECT nazov, id_liek as "ID_LIEK" FROM liek`
     );
     return result.rows;
   } catch (err) {

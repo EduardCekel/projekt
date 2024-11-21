@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Field } from "react-final-form";
 import { Button } from "primereact/button";
+import { Dialog } from "primereact/dialog";
 import { InputMask } from "primereact/inputmask";
 import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
-import { Toast } from "primereact/toast";
 export default function DiseaseForm(props) {
-  const toast = useRef(null);
+  const [showMessage, setShowMessage] = useState(false);
   const [diseaseTypes, setDiseaseTypes] = useState([]);
   const [diseases, setDiseases] = useState([]);
   useEffect(() => {
@@ -33,39 +33,31 @@ export default function DiseaseForm(props) {
         typ: data.type.TYP,
         nazov: data.name.NAZOV,
         datum_od: data.datum_od.toLocaleString("en-GB").replace(",", ""),
-        datum_do:
-          data.datum_do && data.datum_do != null
-            ? data.datum_do.toLocaleString("en-GB").replace(",", "")
-            : null,
+        datum_do: data.datum_do.toLocaleString("en-GB").replace(",", ""),
       }),
     };
-
-    await fetch("/add/choroba", requestOptionsPatient)
-      .then(async (response) => {
-        if (!response.ok) {
-          const errorMessage = await response.json();
-          throw new Error(errorMessage.error);
-        } else {
-          toast.current.show({
-            severity: "success",
-            summary: "Úspech",
-            detail: "Úspešné pridanie choroby",
-            life: 6000,
-          });
-        }
-      })
-      .then(() => (props.onInsert ? props.onInsert() : ""))
-      .catch((error) => {
-        toast.current.show({
-          severity: "error",
-          summary: "Chyba",
-          detail: error.message,
-          life: 6000,
-        });
-      });
+    const responsePatient = await fetch(
+      "/add/choroba",
+      requestOptionsPatient
+    ).then(() => setShowMessage(true));
 
     form.restart();
   };
+
+  const dialogFooter = (
+    <div className="flex justify-content-center">
+      <Button
+        label="OK"
+        className="p-button-text"
+        autoFocus
+        onClick={() => {
+          setShowMessage(false);
+          props.hideDialog();
+          props.onInsert();
+        }}
+      />
+    </div>
+  );
 
   const onDiseaseTypeChange = (e, input) => {
     const token = localStorage.getItem("hospit-user");
@@ -83,7 +75,25 @@ export default function DiseaseForm(props) {
       style={{ width: "100%", marginTop: "2rem" }}
       className="p-fluid grid formgrid"
     >
-      <Toast ref={toast} />
+      <Dialog
+        visible={showMessage}
+        onHide={() => {
+          setShowMessage(false);
+        }}
+        position="top"
+        footer={dialogFooter}
+        showHeader={false}
+        breakpoints={{ "960px": "80vw" }}
+        style={{ width: "30vw" }}
+      >
+        <div className="flex align-items-center flex-column pt-6 px-3">
+          <i
+            className="pi pi-check-circle"
+            style={{ fontSize: "5rem", color: "var(--green-500)" }}
+          ></i>
+          <h5>Úspešné pridanie ochorenia</h5>
+        </div>
+      </Dialog>
 
       <div className="field col-12">
         <Form

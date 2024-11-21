@@ -1,4 +1,3 @@
-const {insertLogs} = require("../utils/InsertLogs");
 module.exports = {
   getAllEquipment: (req, res) => {
     const vybavenie = require("../models/vybavenie");
@@ -7,11 +6,7 @@ module.exports = {
       ret_val = await vybavenie.getAllEquipment(req.params.id);
       res.status(200).json(ret_val);
     })().catch((err) => {
-      insertLogs({
-        status: "failed to get all equipment",
-        description: "Failed to get all equipment",
-        table: "VYBAVENIE",
-      });
+      console.error(err);
       res.status(403).send(err);
     });
   },
@@ -21,11 +16,7 @@ module.exports = {
       ret_val = await vybavenie.deleteEquip(req.body);
       res.status(200);
     })().catch((err) => {
-        insertLogs({
-            status: "failed to delete equipment",
-            description: "Failed to delete equipment",
-            table: "VYBAVENIE",
-        });
+      console.error(err);
       res.status(500).send(err);
     });
   },

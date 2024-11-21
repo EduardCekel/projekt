@@ -1,4 +1,3 @@
-const {insertLogs} = require("../utils/InsertLogs");
 module.exports = {
   getSpravy: (req, res) => {
     const chat = require("../models/chat");
@@ -6,11 +5,7 @@ module.exports = {
       ret_val = await chat.getSpravy(req.params.id_skupiny, req.params.userid);
       res.status(200).json(ret_val);
     })().catch((err) => {
-      // insertLogs({
-      //   status: "failed get messages",
-      //   table: "CHAT_TAB",
-      //   description: "Failed to get messages from group with id: " + req.params.id_skupiny + " and user with id: " + req.params.userid,
-      // })
+      console.error(err);
       res.status(403).send(err);
     });
   },
@@ -22,11 +17,7 @@ module.exports = {
       ret_val = await chat.getNextSpravy(req.body);
       res.status(200).json(ret_val);
     })().catch((err) => {
-        // insertLogs({
-        //     status: "failed get next messages",
-        //     table: "CHAT_TAB",
-        //     description: "Failed to get next messages from group with id: " + req.body.id_skupiny + " and user with id: " + req.body.userid,
-        // })
+      console.error(err);
       res.status(403).send(err);
     });
   },
@@ -37,11 +28,7 @@ module.exports = {
       ret_val = await chat.getUnread(req.params.id);
       res.status(200).json(ret_val);
     })().catch((err) => {
-        // insertLogs({
-        //     status: "failed get unread messages",
-        //     table: "CHAT_TAB",
-        //     description: "Failed to get unread messages for user with id: " + req.params.id,
-        // })
+      console.error(err);
       res.status(403).send(err);
     });
   },
@@ -52,11 +39,7 @@ module.exports = {
       ret_val = await chat.isAdmin(req.params.id, req.params.id_skupiny);
       res.status(200).json(ret_val);
     })().catch((err) => {
-        // insertLogs({
-        //     status: "failed check admin",
-        //     table: "CHAT_TAB",
-        //     description: "Failed to check if user with id: " + req.params.id + " is admin of group with id: " + req.params.id_skupiny,
-        // })
+      console.error(err);
       res.status(403).send(err);
     });
   },
@@ -67,11 +50,8 @@ module.exports = {
       ret_val = await chat.insertSprava(req.body);
       res.status(200).json("success");
     })().catch((err) => {
-        // insertLogs({
-        //     status: "failed insert message",
-        //     table: "CHAT_TAB",
-        //     description: "Failed to insert message",
-        // })
+      // error handling logic 1
+      console.error(err); // logging error
       res.status(500).send(err);
     });
   },
@@ -82,13 +62,9 @@ module.exports = {
       ret_val = await chat.insertUser(req.body);
       res.status(200).json("success");
     })().catch((err) => {
-        // insertLogs({
-        //     status: "failed insert user",
-        //     table: "CHAT_TAB",
-        //     description: "Failed to insert user with id: " + req.body.userid + " in group with id: " + req.body.id_skupiny,
-        // })
-      console.error(err.message);
-      res.status(500).json({ error: err.message });
+      // error handling logic 1
+      console.error(err); // logging error
+      res.status(500).send(err);
     });
   },
 
@@ -98,11 +74,8 @@ module.exports = {
       await chat.updateReadStatus(req.body);
       res.status(200).json("success");
     })().catch((err) => {
-        // insertLogs({
-        //     status: "failed update read status",
-        //     table: "CHAT_TAB",
-        //     description: "Failed to update read status for user with id: " + req.body.userid + " in group with id: " + req.body.id_skupiny,
-        // })
+      // error handling logic 1
+      console.error(err); // logging error
       res.status(500).send(err);
     });
   },
@@ -113,11 +86,7 @@ module.exports = {
       ret_val = await chat.getGroups(req.params.id);
       res.status(200).json(ret_val);
     })().catch((err) => {
-        // insertLogs({
-        //     status: "failed get groups",
-        //     table: "CHAT_TAB",
-        //     description: "Failed to get groups for user with id: " + req.params.id,
-        // })
+      console.error(err);
       res.status(403).send(err);
     });
   },
@@ -128,11 +97,7 @@ module.exports = {
       ret_val = await chat.getOtherUsers(req.params.id_skupiny, req.params.id);
       res.status(200).json(ret_val);
     })().catch((err) => {
-      insertLogs({
-        status: "failed get dostupne miestnosti",
-        table: "Miestnost",
-        description: "Failed to get dostupne miestnosti"
-      })
+      console.error(err);
       res.status(403).send(err);
     });
   },
@@ -154,20 +119,6 @@ module.exports = {
     const chat = require("../models/chat");
     (async () => {
       await chat.updateHistory(req.body);
-      res.status(200).json("success");
-    })().catch((err) => {
-      // insertLogs({
-      //   status: "failed update history",
-      //   table: "CHAT_TAB",
-      //   description: "Failed to update history for user with id: " + req.body.userid + " in group with id: " + req.body.id_skupiny,
-      // })
-      res.status(500).send(err);
-    });
-  },
-  createGroup: (req, res) => {
-    const chat = require("../models/chat");
-    (async () => {
-      ret_val = await chat.createGroup(req.body);
       res.status(200).json("success");
     })().catch((err) => {
       // error handling logic 1

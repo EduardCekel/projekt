@@ -30,16 +30,7 @@ async function insertRecept(body) {
     });
     console.log("Rows inserted " + result.rowsAffected);
   } catch (err) {
-    console.log(err);
-    if (err.errorNum && err.errorNum === 20000) {
-      console.error("Tento liek už je vydaný ale neprevzatý");
-      throw new Error("Tento liek už je vydaný ale neprevzatý");
-    } else if (err.errorNum && err.errorNum === 20001) {
-      console.error("Pacient s týmto rodným číslom neexistuje");
-      throw new Error("Pacient s týmto rodným číslom neexistuje");
-    } else {
-      throw new Error(err.message || err);
-    }
+    throw new Error("Database error: " + err);
   }
 }
 

@@ -4,28 +4,78 @@ const oracledb = database.oracledb;
 // force all queried BLOBs to be returned as Buffers
 oracledb.fetchAsBuffer = [oracledb.BLOB];
 
-async function getZamestnanci(pid_lekara) {
+async function getZamestnanci() {
   try {
     let conn = await database.getConnection();
-    const id_oddelenia = await conn.execute(
-      `SELECT id_oddelenia from zamestnanci where cislo_zam = :pid_lekara`,
-      { pid_lekara }
-    );
-    let id_odd = id_oddelenia.rows[0].ID_ODDELENIA;
+    const result = await conn.execute(`SELECT * FROM zamestnanec`);
+
+    return result.rows;
+  } catch (err) {
+    throw new Error('Database error: ' + err);
+  }
+}
+
+async function getAllDoctorsForHospital(hospitalId) {
+  try {
+    let conn = await database.getConnection();
     const result = await conn.execute(
-      `SELECT typ_zam.nazov as profesia, meno, priezvisko, oddelenie.typ_oddelenia as oddelenie_nazov, nemocnica.nazov as nemocnica_nazov, zamestnanci.cislo_zam 
-          from zamestnanci
-                    join typ_zam using (id_typ)
-                    join os_udaje using(rod_cislo)
-                    join nemocnica using(id_nemocnice)
-                    left join oddelenie on(zamestnanci.id_oddelenia = oddelenie.id_oddelenia)
-              where oddelenie.id_oddelenia = :id_odd`,
-      { id_odd }
+      `
+      SELECT 
+        zam.cislo_zam,
+        zam.rod_cislo,
+        zam.id_typ,
+        zam.id_oddelenia,
+        ou.meno,
+        ou.priezvisko
+      FROM 
+        zamestnanci zam
+      JOIN 
+        os_udaje ou ON ou.rod_cislo = zam.rod_cislo
+      WHERE 
+        zam.id_nemocnice = :hospitalId
+        AND 
+        zam.id_typ IN (1, 3)
+    `,
+      {
+        hospitalId: hospitalId,
+      }
     );
 
     return result.rows;
   } catch (err) {
-    console.log(err);
+    throw new Error('Database error: ' + err);
+  }
+}
+
+async function getAllNursesForHospital(hospitalId) {
+  try {
+    let conn = await database.getConnection();
+    const result = await conn.execute(
+      `
+      SELECT 
+        zam.cislo_zam,
+        zam.rod_cislo,
+        zam.id_typ,
+        zam.id_oddelenia,
+        ou.meno,
+        ou.priezvisko
+      FROM 
+        zamestnanci zam
+      JOIN 
+        os_udaje ou ON ou.rod_cislo = zam.rod_cislo
+      WHERE 
+        zam.id_nemocnice = :hospitalId
+        AND 
+        zam.id_typ = 2
+    `,
+      {
+        hospitalId: hospitalId,
+      }
+    );
+
+    return result.rows;
+  } catch (err) {
+    throw new Error('Database error: ' + err);
   }
 }
 
@@ -39,7 +89,7 @@ async function getZamestnanciFotka(id_zamestnanca) {
     console.log(result.rows[0]);
     return result.rows[0];
   } catch (err) {
-    throw new Error("Database error: " + err);
+    throw new Error('Database error: ' + err);
   }
 }
 
@@ -73,7 +123,7 @@ async function getZamestnanec(id_zamestnanca) {
     console.log(result.rows[0]);
     return result.rows[0];
   } catch (err) {
-    throw new Error("Database error: " + err);
+    throw new Error('Database error: ' + err);
   }
 }
 
@@ -81,4 +131,6 @@ module.exports = {
   getZamestnanci,
   getZamestnanciFotka,
   getZamestnanec,
+  getAllDoctorsForHospital,
+  getAllNursesForHospital,
 };

@@ -12,8 +12,7 @@ async function getKonzilia(cislo_zam) {
                   join zdravotna_karta using (id_karty)
                   join pacient using (id_pacienta)
                   join os_udaje using (rod_cislo)
-                  where cislo_zam =:cislo_zam 
-                  order by k.datum desc`,
+                  where cislo_zam =:cislo_zam `,
       { cislo_zam }
     );
 
@@ -60,6 +59,7 @@ async function insertKonziliumUser(body) {
   try {
     let conn = await database.getConnection();
     body.lekari.forEach((element) => {
+      console.log(element);
       conn.execute(
         `begin zam_konzilium_insert(:cislo_zam, :id_zaznamu); end;`,
         {
