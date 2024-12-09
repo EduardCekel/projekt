@@ -34,7 +34,7 @@ const server = http.createServer(app); // Create an HTTP server using your Expre
 const io = socketIo(server); // Initialize Socket.io with the HTTP server
 
 app.use(credentials);
-// app.use(cors(corsOptions)); // You can add this back if needed
+app.use(cors(corsOptions)); // You can add this back if needed
 app.use(express.json({ limit: '50mb' }));
 app.use(
   express.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 })

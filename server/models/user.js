@@ -1,4 +1,4 @@
-const database = require("../database/Database");
+const database = require('../database/Database');
 
 async function userExists(userid) {
   try {
@@ -14,7 +14,7 @@ async function userExists(userid) {
 
     return false;
   } catch (err) {
-    throw new Error("Database error: " + err);
+    throw new Error('Database error: ' + err);
   }
 }
 
@@ -22,31 +22,28 @@ async function userExistsInDB(userid) {
   try {
     let conn = await database.getConnection();
     let result;
-    if(!isNaN(userid)) {
+    if (!isNaN(userid)) {
       userid = Number(userid);
       result = await conn.execute(
-          `SELECT count(*) as pocet FROM zamestnanci where cislo_zam = :userid`,
-          [userid]
+        `SELECT count(*) as pocet FROM zamestnanci where cislo_zam = :userid`,
+        [userid]
       );
     } else {
       result = await conn.execute(
-          `SELECT count(*) as pocet FROM pacient where rod_cislo = :userid`,
-          [userid]
+        `SELECT count(*) as pocet FROM pacient where rod_cislo = :userid`,
+        [userid]
       );
     }
 
     return result.rows[0].POCET === 0;
-
-
   } catch (err) {
-    throw new Error("Database error: " + err);
+    throw new Error('Database error: ' + err);
   }
 }
 
 async function insertUser(body) {
   try {
     let conn = await database.getConnection();
-
 
     const result = await conn.execute(
       `insert into user_tab values(:userid, :pwd, null, :role)`,
@@ -58,9 +55,9 @@ async function insertUser(body) {
       { autoCommit: true }
     );
 
-    console.log("Rows inserted " + result.rowsAffected);
+    console.log('Rows inserted ' + result.rowsAffected);
   } catch (err) {
-    throw new Error("Database error: " + err);
+    throw new Error('Database error: ' + err);
   }
 }
 
@@ -78,7 +75,7 @@ async function getUserByUserId(userid) {
     console.log(result.rows);
     return result.rows[0];
   } catch (err) {
-    throw new Error("Database error: " + err);
+    throw new Error('Database error: ' + err);
   }
 }
 
@@ -96,7 +93,7 @@ async function getUserByRefreshToken(refresh_token) {
     console.log(result.rows);
     return result.rows[0];
   } catch (err) {
-    throw new Error("Database error: " + err);
+    throw new Error('Database error: ' + err);
   }
 }
 
@@ -113,9 +110,9 @@ async function updateUserRefreshToken(body) {
       { autoCommit: true }
     );
 
-    console.log("Rows updated " + result.rowsAffected);
+    console.log('Rows updated ' + result.rowsAffected);
   } catch (err) {
-    throw new Error("Database error: " + err);
+    throw new Error('Database error: ' + err);
   }
 }
 
