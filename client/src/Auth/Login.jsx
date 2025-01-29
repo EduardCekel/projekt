@@ -45,7 +45,7 @@ export const Login = () => {
         ip: logDetails,
       }),
     };
-    fetch('/api/api/auth/login', requestOptions)
+    fetch('/api/auth/login', requestOptions)
       .then((response) => response.json())
       .then((res) => {
         if (res.message !== undefined) {
