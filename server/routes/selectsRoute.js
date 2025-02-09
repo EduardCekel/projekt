@@ -93,7 +93,7 @@ router.get(
 );
 router.get(
   "/zamestnanec/:id_zamestnanca",
-  verify.verifyRoles(0,1, 2, 3),
+  //verify.verifyRoles(0,1, 2, 3),
   controller.getZamestnanec
 );
 
