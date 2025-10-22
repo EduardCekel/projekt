@@ -98,6 +98,11 @@ router.get(
 );
 
 router.get(
+  "/zamestnanecWithNavButtons/:id_zamestnanca",
+  controller.getZamestnanecWithNavButtons
+);
+
+router.get(
   "/hospitalizacieNemocniceXML/:id_nemocnice",
   verify.verifyRoles(0,1, 2, 3),
   controller.getHospitalizacieNemocniceXML
@@ -177,6 +182,10 @@ router.get(
   "/zoznamLekarov",
   verify.verifyRoles(0, 1, 2, 3),
   controller.getZoznamLekarov
+);
+router.get(
+  "/mesta",
+  controller.getMesta
 );
 
 module.exports = router;

@@ -109,6 +109,7 @@ const handleLogin = async (req, res) => {
 
   const foundUser = await userModel.getUserByUserId(userid);
   const match = await bcrypt.compare(pwd, foundUser.PWD);
+
   if (match == true) {
     const accessToken = jwt.sign(
       {

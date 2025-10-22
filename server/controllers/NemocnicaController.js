@@ -1,3 +1,8 @@
+const { resSucc, resErr } = require('../utils/apiResponse');
+const HttpStatus = require('../enums/http-status.enum');
+const { DefaultMsg } = require('../enums/message.enum');
+const log = require("../utils/logger");
+
 module.exports = {
   getMapaNemocnice: (req, res) => {
     const nemocnica = require('../models/nemocnica');
@@ -56,6 +61,18 @@ module.exports = {
       // error handling logic 1
       console.error(err); // logging error
       res.status(500).send(err);
+    });
+  },
+  getAllHospitals: (req, res) => {
+    log.info("getAllHospitals()");
+    const hospital = require('../models/nemocnica');
+    
+    (async () => {
+      const ret_val = await hospital.getAllHospitals();
+      return resSucc(res, HttpStatus.OK, DefaultMsg.DEFAULT_MSG, ret_val);
+    })().catch((err) => {
+      log.err(err);
+      return resErr(res, err, HttpStatus.INTERNAL_SERVER_ERROR);
     });
   },
 };

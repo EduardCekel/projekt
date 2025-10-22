@@ -199,6 +199,31 @@ async function insertMapa(body) {
   }
 }
 
+async function getAllHospitals() {
+   try {
+    let conn = await database.getConnection();
+    const result = await conn.execute(
+      `
+      SELECT 
+          n.id_nemocnice, 
+          n.psc, 
+          n.nazov, 
+          n.latitude,
+          n.longitude,
+          m.nazov as mesto 
+      FROM 
+          nemocnica n
+      JOIN 
+          mesto m ON (n.psc = m.psc)
+      `
+    );
+
+    return result.rows;
+  } catch (err) {
+    throw new Error('Database error: ' + err);
+  }
+}
+
 module.exports = {
   getNemocnice,
   getHospitalizacieNemocniceXML,
@@ -209,4 +234,5 @@ module.exports = {
   getMapaNemocnice,
   getOddeleniaByNemocnica,
   getAllCurrentlyHospitalizedPatientsForHospital,
+  getAllHospitals
 };

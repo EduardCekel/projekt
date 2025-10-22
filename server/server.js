@@ -29,9 +29,18 @@ const chatRoute = require('./routes/chatRoute');
 const ordersRoute = require('./routes/ordersRoute');
 const warehouseTransfersRoute = require('./routes/warehouseTransfersRoute');
 const hospitalizaciaRoute = require('./routes/hospitalizacieRoute');
+const vehicleRoute = require("./routes/vehiclesRoute");
+const departureRoute = require("./routes/departuresRoute")
 
 const server = http.createServer(app); // Create an HTTP server using your Express app
 const io = socketIo(server); // Initialize Socket.io with the HTTP server
+
+const nocache = (req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  next();
+};
 
 app.use(credentials);
 app.use(cors(corsOptions)); // You can add this back if needed
@@ -43,7 +52,7 @@ app.use(
 app.use(cookieParser()); // Middleware for cookies
 
 app.use('/auth', require('./routes/authRoute'));
-app.use(verifyJWT);
+app.use(verifyJWT, nocache);
 app.use('/logs', logRoute);
 app.use('/sklad', storageRoute);
 app.use('/lekar', lekarRoute);
@@ -63,6 +72,8 @@ app.use('/presuny', warehouseTransfersRoute);
 app.use('/hospitalizacia', hospitalizaciaRoute);
 app.use('/nemocnica', nemocnicaRoute);
 app.use('/miestnost', miestnostRoute);
+app.use("/vozidla", vehicleRoute);
+app.use("/vyjazdy", departureRoute)
 
 io.on('connection', (socket) => {
   socket.emit('yourSocketId', socket.id);
