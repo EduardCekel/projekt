@@ -32,8 +32,17 @@ const hospitalizaciaRoute = require('./routes/hospitalizacieRoute');
 const vehicleRoute = require("./routes/vehiclesRoute");
 const departureRoute = require("./routes/departuresRoute")
 
+const notificationsRoute = require('./routes/notificationsRoute');
+const registerSocketAuth = require('./sockets/socketAuth');
+
 const server = http.createServer(app); // Create an HTTP server using your Express app
-const io = socketIo(server); // Initialize Socket.io with the HTTP server
+const io = socketIo(server, {
+  path: '/socket.io',
+  cors: {
+    origin: ['http://localhost:4200'], // Angular dev origin
+    credentials: true,
+  },
+}); // Initialize Socket.io with the HTTP server
 
 const nocache = (req, res, next) => {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
@@ -41,6 +50,8 @@ const nocache = (req, res, next) => {
   res.set('Expires', '0');
   next();
 };
+
+app.set('io', io);
 
 app.use(credentials);
 app.use(cors(corsOptions)); // You can add this back if needed
@@ -74,9 +85,13 @@ app.use('/nemocnica', nemocnicaRoute);
 app.use('/miestnost', miestnostRoute);
 app.use("/vozidla", vehicleRoute);
 app.use("/vyjazdy", departureRoute)
+app.use('/notifications', notificationsRoute);
+
+registerSocketAuth(io);
 
 io.on('connection', (socket) => {
   socket.emit('yourSocketId', socket.id);
+
   socket.on('sendMessage', (message, params) => {
     io.emit('newMessage', {
       content: message,
@@ -85,14 +100,6 @@ io.on('connection', (socket) => {
       type: 'text',
     });
   });
-
-  // socket.on("sendImage", (image, params) => {
-  //   io.emit("newMessage", {
-  //     content: image,
-  //     sender: params.userId,
-  //     type: "image",
-  //   });
-  // });
 
   socket.on('disconnect', () => {});
   socket.on('typing', (params) => {

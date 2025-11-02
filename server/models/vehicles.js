@@ -5,27 +5,33 @@ async function getVehicles() {
   try {
     const conn = await database.getConnection();
     const result = await conn.execute(
-      `SELECT 
-          nazov, 
-          ecv, 
-          typ_vozidla, 
-          to_char(priradenie, 'dd.mm.yyyy') as dat_priradenia, 
-          to_char(stk, 'dd.mm.yyyy') as dat_stk,
-          CASE 
-              WHEN NVL(plan_vyjazdov.datum_od, add_months(sysdate, -1)) <= SYSDATE
-                    AND NVL(plan_vyjazdov.datom_do, add_months(sysdate, -1)) >= SYSDATE 
+      `SELECT
+          n.nazov,
+          v.ecv,
+          v.typ_vozidla,
+          TO_CHAR(v.priradenie, 'dd.mm.yyyy') AS dat_priradenia,
+          TO_CHAR(v.stk,        'dd.mm.yyyy') AS dat_stk,
+          CASE
+              WHEN EXISTS (
+                  SELECT 
+                      1
+                  FROM 
+                      vyjazdy y
+                  JOIN 
+                      plan_vyjazdov p ON (p.id_plan_vyjazdu = y.id_plan_vyjazdu)
+                  WHERE
+                      y.ecv = v.ecv
+                      AND p.datum_od <= SYSDATE
+                      AND p.datom_do >= SYSDATE
+              )
               THEN 0
               ELSE 1
           END AS volne,
-          obrazok
+          v.obrazok
       FROM 
-          nemocnica
+          vozidla v
       JOIN 
-          vozidla using (id_nemocnice)
-      LEFT JOIN 
-          vyjazdy using (ecv)
-      LEFT JOIN 
-          plan_vyjazdov using (id_plan_vyjazdu)`
+          nemocnica n ON n.id_nemocnice = v.id_nemocnice`
     );
     
     return result.rows;
@@ -61,7 +67,8 @@ async function getVehiclesECVPlanHist(vehicle_ecv) {
     const conn = await database.getConnection();
     const result = await conn.execute(
       `SELECT 
-          nazov, to_char(vyjazdy.datum_od, 'DD:MM:YYYY HH:MI:SS') as datum_cas, 
+          nazov, 
+          to_char(vyjazdy.datum_od, 'DD:MM:YYYY HH:MI:SS') as datum_cas, 
           odkial_mesto as odkial, 
           kam_mesto as kam
       FROM 

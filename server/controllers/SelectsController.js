@@ -1,4 +1,3 @@
-const getNavigationItems = require('../utils/navigation/factory/nav-factory');
 const { resSucc, resErr } = require('../utils/apiResponse');
 const HttpStatus = require('../enums/http-status.enum');
 const { DefaultMsg } = require('../enums/message.enum');
@@ -468,26 +467,9 @@ module.exports = {
 
   getZamestnanec: (req, res) => {
     const zamestnanec = require("../models/zamestnanec");
-    console.log(req.params);
+    console.log('getZamestnanec: ' + req.params.id_zamestnanca);
     (async () => {
       ret_val = await zamestnanec.getZamestnanec(req.params.id_zamestnanca);
-      res.status(200).json(ret_val);
-    })().catch((err) => {
-      console.error(err);
-      res.status(403).send(err);
-    });
-  },
-
-  getZamestnanecWithNavButtons: (req, res) => {
-    const zamestnanec = require("../models/zamestnanec");
-    console.log(req.params);
-    (async () => {
-      const user = await zamestnanec.getZamestnanec(req.params.id_zamestnanca);
-      const navButtons = getNavigationItems(user.TYPEID);
-      ret_val = {
-        USER: user,
-        NAV_BUTTONS: navButtons
-      }
       res.status(200).json(ret_val);
     })().catch((err) => {
       console.error(err);

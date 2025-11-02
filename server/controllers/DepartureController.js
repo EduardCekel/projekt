@@ -58,12 +58,32 @@ module.exports = {
     });
   },
 
-  getDepartureNoVehicle: (req, res) => {
-    log.info("getDepartureNoVehicle()");
+  getMatchingDepartures: (req, res) => {
+    log.info("getMatchingDepartures()");
 
     (async () => {
-        ret_val = await dep_plan.getDepartureNoVehicle();
-        res.status(200).json(ret_val);
+        const hosp_from = req.query.from;
+        const hosp_to = req.query.to;
+        const date = req.query.date;
+        const ret_val = await dep_plan.getMatchingDepartures(hosp_from, hosp_to, date);
+        return resSucc(res, HttpStatus.OK, DefaultMsg.DEFAULT_MSG, ret_val);
+      })()
+      .catch((err) => {
+        log.err(err);
+        return resErr(res, err);
+    });
+  },
+
+  getMatchingDeparturesCount: (req, res) => {
+    log.info("getMatchingDeparturesCount()");
+
+    (async () => {
+        const hosp_from = req.query.from;
+        const hosp_to = req.query.to;
+        const date = req.query.date;
+
+        const ret_val = await dep_plan.getMatchingDeparturesCount(hosp_from, hosp_to, date);
+        return resSucc(res, HttpStatus.OK, DefaultMsg.DEFAULT_MSG, ret_val);
       })()
       .catch((err) => {
         log.err(err);
@@ -107,12 +127,49 @@ module.exports = {
     });
   },
 
+  updateDeparturePlanDuration: (req, res) => {
+    //log.info('updateDeparturePlan()')
+
+    (async () => {
+      ret_val = await dep_plan.updateDeparturePlanDuration(req.body);
+      return resSucc(res, HttpStatus.OK, SuccessMsg.DEPARTURE_DURATION_CHANGED);
+    })().catch((err) => {
+      log.err(err);
+      return resErr(res, err);
+    });
+  },
+
+  
+  updateVehicleInDeparture: (req, res) => {
+    log.info('updateVehicleInDeparture()');
+
+    (async () => {
+      const ret_val = await dep_plan.updateVehicleInDeparture(req.body);
+      return resSucc(res, HttpStatus.OK, SuccessMsg.DEPARTURE_VEHICLE_CHANGED);
+    })().catch((err) => {
+      log.err(err);
+      return resErr(res, err);
+    });
+  },
+
   deletePlannedDeparture: (req, res) => {
-    log.info('deletePlannedDeparture()')
+    //log.info('deletePlannedDeparture()')
 
     (async () => {
       ret_val = await dep_plan.deletePlannedDeparture(req.params.dep_id);
       resSucc(res, HttpStatus.OK, SuccessMsg.DEPARTURE_DELETED);
+    })().catch((err) => {
+      log.err(err);
+      return resErr(res, err);
+    });
+  },
+
+  deleteDeparture: (req, res) => {
+    //log.info('deleteDeparture()')
+
+    (async () => {
+      const ret_val = await dep_plan.deleteDeparture(req.params.dep_id);
+      resSucc(res, HttpStatus.OK, SuccessMsg.DEPARTURE_DELETED, ret_val);
     })().catch((err) => {
       log.err(err);
       return resErr(res, err);

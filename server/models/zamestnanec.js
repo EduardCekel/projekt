@@ -112,7 +112,7 @@ async function getZamestnanec(id_zamestnanca) {
           cislo_zam = :id_zamestnanca`,
       [id_zamestnanca]
     );
-    console.log(result.rows[0]);
+
     return result.rows[0];
   } catch (err) {
     throw new Error('Database error: ' + err);

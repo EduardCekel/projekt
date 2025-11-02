@@ -21,7 +21,7 @@ async function getDeparturePlans() {
         FROM plan_vyjazdov pv
             JOIN mesto m ON (pv.odkial_mesto  = m.psc)
             JOIN mesto me ON (pv.kam_mesto  = me.psc)
-            JOIN typ_ucelu_vyjazdu tuv ON (pv.id_typu_vyjazdu = tuv.id_typu_vyjazdu)
+            JOIN typ_ucelu_vyjazdu tuv ON (pv.id_typu_vyjazdu_ciel = tuv.id_typu_vyjazdu)
         WHERE id_plan_vyjazdu NOT IN (
             SELECT id_plan_vyjazdu FROM vyjazdy
           )

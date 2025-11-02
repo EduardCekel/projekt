@@ -7,6 +7,8 @@ const SuccessMsg = Object.freeze({
   DEPARTURE_UPDATED: 'Výjazd úspešne upravený',
   DEPARTURE_DELETED: 'Výjazd úspešne zmazaný',
   DEPARTURE_VEHICLE_ASSIGNED: 'Vozidlo úspešne priradené',
+  DEPARTURE_VEHICLE_CHANGED: 'Vozidlo úspešne zemenené',
+  DEPARTURE_DURATION_CHANGED: 'Dĺžka výjazdu úspešne zmenená',
 });
 
 const DefaultMsg = Object.freeze({

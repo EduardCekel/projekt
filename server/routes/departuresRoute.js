@@ -25,9 +25,14 @@ router.get(
   controller.getDeparturesHistory
 );
 router.get(
-  "/departures/noVehicles", 
+  "/matchingDepartures", 
   verify.verifyRoles(AccRoles.PHYSICIAN, AccRoles.PARAMEDIC), 
-  controller.getDepartureNoVehicle
+  controller.getMatchingDepartures
+);
+router.get(
+  "/matchingDeparturesCount", 
+  verify.verifyRoles(AccRoles.PHYSICIAN, AccRoles.PARAMEDIC), 
+  controller.getMatchingDeparturesCount
 );
 router.post(
   "/newPlan", 
@@ -44,10 +49,25 @@ router.put(
   verify.verifyRoles(AccRoles.PHYSICIAN, AccRoles.PARAMEDIC), 
   controller.updateDeparturePlan
 );
+router.put(
+  "/updateDeparturePlanDuration", 
+  verify.verifyRoles(AccRoles.PHYSICIAN, AccRoles.PARAMEDIC), 
+  controller.updateDeparturePlanDuration
+);
+router.put(
+  "/changeVehicleInDeparture", 
+  verify.verifyRoles(AccRoles.PHYSICIAN, AccRoles.PARAMEDIC), 
+  controller.updateVehicleInDeparture
+);
 router.delete(
   "/deletePlannedDep/:dep_id", 
   verify.verifyRoles(AccRoles.PHYSICIAN, AccRoles.PARAMEDIC), 
   controller.deletePlannedDeparture
+);
+router.delete(
+  "/deleteDeparture/:dep_id", 
+  verify.verifyRoles(AccRoles.PHYSICIAN, AccRoles.PARAMEDIC), 
+  controller.deleteDeparture
 );
 
 module.exports = router;

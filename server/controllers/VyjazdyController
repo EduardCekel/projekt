@@ -70,7 +70,6 @@ module.exports = {
   },
 
   insertDeparturePlan: (req, res) => {
-    console.log("som tuuuuuu")
     log.info('insertDeparturePlan()');
     const dep_plan = require("../models/vyjazdy");
 

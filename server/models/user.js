@@ -72,7 +72,6 @@ async function getUserByUserId(userid) {
       }
     );
 
-    console.log(result.rows);
     return result.rows[0];
   } catch (err) {
     throw new Error('Database error: ' + err);
@@ -97,6 +96,36 @@ async function getUserByRefreshToken(refresh_token) {
   }
 }
 
+async function getUserEmployeeByRole(userRoles) {
+  try {
+    let conn = await database.getConnection();
+
+    const binds = {};
+    const placeholders = userRoles.map((role, i) => {
+      const key = `r${i}`;
+      binds[key] = role;
+      return `:${key}`;
+    }).join(', ');
+
+    const result = await conn.execute(
+      `SELECT 
+          cislo_zam,
+          id_typ
+      FROM 
+          user_tab ut
+      JOIN 
+          zamestnanci z ON (ut.userid = TO_CHAR(z.cislo_zam))
+      WHERE
+          z.id_typ IN (${placeholders})`,
+      binds
+    );
+
+    return result;
+  } catch (err) {
+    throw new Error('Database error: ' + err);
+  }
+}
+
 async function updateUserRefreshToken(body) {
   try {
     let conn = await database.getConnection();
@@ -109,8 +138,6 @@ async function updateUserRefreshToken(body) {
       },
       { autoCommit: true }
     );
-
-    console.log('Rows updated ' + result.rowsAffected);
   } catch (err) {
     throw new Error('Database error: ' + err);
   }
@@ -122,5 +149,6 @@ module.exports = {
   insertUser,
   getUserByUserId,
   getUserByRefreshToken,
+  getUserEmployeeByRole,
   updateUserRefreshToken,
 };

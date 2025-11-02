@@ -20,7 +20,7 @@ const checkForCorrectId = () => {
     if (!req?.userid) return res.sendStatus(401);
 
     const id = parseInt(req.params.id);
-    console.log(req.params);
+    
     if (id !== req.userid) {
       return res.sendStatus(401);
     }

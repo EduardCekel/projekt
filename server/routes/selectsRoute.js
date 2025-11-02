@@ -98,11 +98,6 @@ router.get(
 );
 
 router.get(
-  "/zamestnanecWithNavButtons/:id_zamestnanca",
-  controller.getZamestnanecWithNavButtons
-);
-
-router.get(
   "/hospitalizacieNemocniceXML/:id_nemocnice",
   verify.verifyRoles(0,1, 2, 3),
   controller.getHospitalizacieNemocniceXML
